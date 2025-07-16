@@ -1,0 +1,16 @@
+---
+title: "Capstone Project: What Makes Customers Repeat Buyers?"
+output: html_document
+---
+
+## Project Overview
+
+This project explores patterns in customer behavior to determine what influences repeat purchases in an e-commerce setting.
+
+## Key Steps
+- Cleaned the dataset: removed duplicates, standardized columns, and handled missing data
+- Used R for exploratory data analysis (EDA)
+- Analyzed customer trends by purchase frequency, order size, delivery time, and product category
+
+## Findings
+Customers who had faster delivery and made higher-value purchases were more likely to return. Certain product types also showed higher repeat rates.
