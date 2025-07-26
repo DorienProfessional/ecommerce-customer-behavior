@@ -1,0 +1,46 @@
+# Share Step – Capstone Project Summary
+
+To share my findings on what makes customers repeat buyers, I created clear, visually engaging charts using R’s ggplot2 package, focusing on key factors like product category and delivery time. I summarized results in an accessible, easy-to-navigate GitHub Pages website that includes downloadable datasets and a detailed README. My presentation emphasizes actionable insights, such as the importance of fast delivery in driving repeat purchases. Accessibility considerations like alt text for images and colorblind-friendly palettes were applied to ensure inclusivity.
+
+---
+
+## 1. Determine the Best Way to Share Your Findings
+
+- GitHub Pages Website: Host project pages with findings and visualizations.
+- PDF Report: Summarize analysis and recommendations.
+- Presentation Slides: Prepare slides for live or recorded presentation.
+- Interactive Dashboard: Use R Shiny or Tableau for exploration.
+
+---
+
+## 2. Create Effective Data Visualizations
+
+- Use bar charts, boxplots, line charts, and pie charts.
+- Keep visuals clear, with titles, labels, and legends.
+- Example R code snippet:
+
+```r
+library(ggplot2)
+
+ggplot(data_summary, aes(x = category, fill = repeat_buyer)) +
+  geom_bar(position = "dodge") +
+  labs(title = "Repeat Buyers by Product Category", x = "Product Category", y = "Count") +
+  theme_minimal()
+
+---
+
+### Step 2: Commit the file
+
+- Scroll down and write a commit message like:
+
+
+- Click **Commit new file**.
+
+---
+
+### Step 3 (Optional): Link this page in your main README
+
+Edit your `README.md` (or `index.md`) and add a link:
+
+```markdown
+- [Share Step](share.md)
