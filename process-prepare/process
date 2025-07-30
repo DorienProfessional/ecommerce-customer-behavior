@@ -5,17 +5,17 @@ library(lubridate)
 library(tidyr)
 
 # ----------------------------------------------
-# Step 1: Load the synthetic dataset
+#  Load the synthetic dataset
 # ----------------------------------------------
 # Replace "ecommerce_data.csv" with your actual file name
 ecommerce_data <- read_csv("ecommerce_data.csv")
 
-# Step 2: Preview structure and a few rows of the dataset
+# Preview structure and a few rows of the dataset
 glimpse(ecommerce_data)
 head(ecommerce_data)
 
 # ----------------------------------------------
-# Step 3: Check for missing values
+#  Check for missing values
 # ----------------------------------------------
 missing_summary <- ecommerce_data %>%
   summarise_all(~sum(is.na(.)))
@@ -27,14 +27,14 @@ ecommerce_data <- ecommerce_data %>%
   drop_na(customer_id, event_type, event_time)
 
 # ----------------------------------------------
-# Step 4: Format date/time columns
+#  Format date/time columns
 # ----------------------------------------------
 # Convert event_time to datetime format for time-based analysis
 ecommerce_data <- ecommerce_data %>%
   mutate(event_time = as_datetime(event_time))
 
 # ----------------------------------------------
-# Step 5: Standardize text fields (if needed)
+#  Standardize text fields (if needed)
 # ----------------------------------------------
 # Convert event_type and category_code to lowercase
 ecommerce_data <- ecommerce_data %>%
@@ -44,7 +44,7 @@ ecommerce_data <- ecommerce_data %>%
   )
 
 # ----------------------------------------------
-# Step 6: Create derived variables (optional)
+#  Create derived variables (optional)
 # ----------------------------------------------
 # Add new columns such as:
 # - date only
@@ -58,7 +58,7 @@ ecommerce_data <- ecommerce_data %>%
   )
 
 # ----------------------------------------------
-# Step 7: Filter the dataset (optional)
+# Filter the dataset (optional)
 # ----------------------------------------------
 # Keep only relevant events for customer behavior (e.g., views, add_to_cart, purchases)
 ecommerce_data <- ecommerce_data %>%
