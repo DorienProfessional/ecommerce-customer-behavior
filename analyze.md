@@ -1,54 +1,103 @@
-# 🔍 Analyze Step – Capstone Project: What Makes Customers Repeat Buyers in E-Commerce
+# Load necessary libraries
+library(dplyr)
+library(ggplot2)
+library(lubridate)
+library(tidyr)
 
-## 📊 Overview
-In this step, I explored the e-commerce dataset to identify behaviors and factors that influence repeat purchases. The goal was to clean, organize, and analyze the data to reveal patterns that may help businesses improve customer retention.
+# Step 1: Preview the dataset structure
+glimpse(ecommerce_data)
 
----
+# Step 2: Convert event_time to a proper datetime format
+ecommerce_data <- ecommerce_data %>%
+  mutate(event_time = as_datetime(event_time))
 
-## 📦 1. Aggregate the Data
-I grouped the dataset by `Customer_ID` to calculate:
-- Total number of orders per customer
-- Total amount spent per customer
-- A new field called `Repeat_Buyer` to identify customers with more than one order
+# -----------------------------------------------------
+# Step 3: Identify how many customers are repeat buyers
+# -----------------------------------------------------
+# Filter for purchases only
+purchase_data <- ecommerce_data %>%
+  filter(event_type == "purchase")
 
-This helped separate repeat buyers from one-time customers.
+# Count purchases per customer
+repeat_buyers <- purchase_data %>%
+  group_by(customer_id) %>%
+  summarise(purchase_count = n()) %>%
+  mutate(repeat_buyer = purchase_count > 1)
 
----
+# Summarize how many are repeat vs one-time buyers
+repeat_summary <- repeat_buyers %>%
+  count(repeat_buyer) %>%
+  mutate(percent = n / sum(n) * 100)
 
-## 📐 2. Organize and Format the Data
-- Cleaned up column names for clarity
-- Reformatted numerical values and date columns
-- Sorted columns by customer, order count, repeat status, and total spent
+print(repeat_summary)
 
-Example structure:
-| Customer_ID | Repeat_Buyer | Order_Count | Total_Spent |
-|-------------|---------------|-------------|-------------|
-| 1001        | Yes           | 3           | $185.75     |
-| 1002        | No            | 1           | $52.00      |
+# --------------------------------------------
+# Step 4: Calculate Average Order Value (AOV)
+# --------------------------------------------
+# Group by customer and calculate AOV
+aov <- purchase_data %>%
+  group_by(customer_id) %>%
+  summarise(
+    total_spent = sum(price),
+    total_orders = n(),
+    avg_order_value = total_spent / total_orders
+  )
 
----
+# Summary of AOV across all customers
+summary(aov$avg_order_value)
 
-## 🔢 3. Perform Calculations
-I calculated:
-- **Average order value** per customer
-- **Repeat purchase rate** across all customers
-- **Top product categories** among repeat buyers
-- **Average delivery time** for repeat vs. non-repeat customers
+# ---------------------------------------------------
+# Step 5: Build a customer journey funnel visualization
+# ---------------------------------------------------
+# Count total events by type (view → add_to_cart → purchase)
+event_funnel <- ecommerce_data %>%
+  filter(event_type %in% c("view", "add_to_cart", "purchase")) %>%
+  count(event_type) %>%
+  arrange(desc(n))
 
----
+# Visualize the funnel
+ggplot(event_funnel, aes(x = reorder(event_type, -n), y = n, fill = event_type)) +
+  geom_col() +
+  labs(title = "Customer Journey Funnel",
+       x = "Event Type",
+       y = "Count") +
+  theme_minimal()
 
-## 📈 4. Identify Trends and Relationships
-Early trends show:
-- Repeat buyers typically spend more than one-time buyers.
-- Certain categories, like **electronics** and **fashion**, have higher repeat rates.
-- Faster delivery times may be associated with higher return rates.
+# -----------------------------------------------------
+# Step 6: Analyze purchases by day of the week
+# -----------------------------------------------------
+# Extract day of week from timestamp and count purchases
+purchase_data %>%
+  mutate(weekday = wday(event_time, label = TRUE)) %>%
+  count(weekday) %>%
+  ggplot(aes(x = weekday, y = n)) +
+  geom_line(group = 1, color = "steelblue") +
+  geom_point() +
+  labs(title = "Purchases by Day of Week",
+       x = "Day",
+       y = "Number of Purchases") +
+  theme_minimal()
 
-These patterns will help shape business strategies focused on retention and loyalty.
+# -----------------------------------------------------
+# Step 7: Perform RFM Analysis (Recency, Frequency, Monetary)
+# -----------------------------------------------------
+# Calculate RFM metrics for each customer
+rfm_data <- purchase_data %>%
+  group_by(customer_id) %>%
+  summarise(
+    recency = as.numeric(difftime(Sys.Date(), max(event_time), units = "days")),
+    frequency = n(),
+    monetary = sum(price)
+  )
 
----
+# Step 8: Create RFM score by segmenting each metric into quintiles (1-5)
+rfm_data <- rfm_data %>%
+  mutate(
+    r_score = ntile(-recency, 5), # lower recency = better score
+    f_score = ntile(frequency, 5),
+    m_score = ntile(monetary, 5),
+    rfm_score = r_score + f_score + m_score
+  )
 
-## 🧠 Next Steps
-- Create visualizations comparing spending behavior
-- Investigate seasonal trends in customer return rates
-- Explore the effect of delivery times or promotions on repeat buying
-
+# View top of RFM table
+head(rfm_data)
