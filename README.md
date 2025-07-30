@@ -1,2 +1,60 @@
-# ecommerce-customer-behavior
-An R based data analytics project exploring the key factors that influence repeat purchases in an e-commerce store.
+# Load essential libraries
+library(readr)
+library(dplyr)
+library(lubridate)
+library(tidyr)
+
+# ----------------------------------------------
+#  Import the synthetic dataset
+# ----------------------------------------------
+# Replace with your actual filename or path
+ecommerce_data <- read_csv("ecommerce_data.csv")
+
+# ----------------------------------------------
+# View structure of the dataset
+# ----------------------------------------------
+# Understand column names, types, and sample values
+glimpse(ecommerce_data)
+head(ecommerce_data)
+
+# ----------------------------------------------
+# Count number of rows and columns
+# ----------------------------------------------
+cat("Number of rows:", nrow(ecommerce_data), "\n")
+cat("Number of columns:", ncol(ecommerce_data), "\n")
+
+# ----------------------------------------------
+# Identify column names and data types
+# ----------------------------------------------
+str(ecommerce_data)
+
+# ----------------------------------------------
+#  Get summary statistics for numeric fields
+# ----------------------------------------------
+summary(select(ecommerce_data, where(is.numeric)))
+
+# ----------------------------------------------
+#  View unique values in key categorical fields
+# ----------------------------------------------
+# Event types: view, add_to_cart, purchase, etc.
+unique(ecommerce_data$event_type)
+
+# Category codes: optional product classifications
+if ("category_code" %in% names(ecommerce_data)) {
+  unique(ecommerce_data$category_code)
+}
+
+# ----------------------------------------------
+#  Check for duplicate rows
+# ----------------------------------------------
+duplicate_count <- ecommerce_data %>%
+  duplicated() %>%
+  sum()
+
+cat("Number of duplicate rows:", duplicate_count, "\n")
+
+# ----------------------------------------------
+#  Check for missing values
+# ----------------------------------------------
+missing_counts <- colSums(is.na(ecommerce_data))
+print(missing_counts)
