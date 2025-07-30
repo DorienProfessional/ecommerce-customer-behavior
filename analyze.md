@@ -4,15 +4,15 @@ library(ggplot2)
 library(lubridate)
 library(tidyr)
 
-# Step 1: Preview the dataset structure
+#  Preview the dataset structure
 glimpse(ecommerce_data)
 
-# Step 2: Convert event_time to a proper datetime format
+#  Convert event_time to a proper datetime format
 ecommerce_data <- ecommerce_data %>%
   mutate(event_time = as_datetime(event_time))
 
 # -----------------------------------------------------
-# Step 3: Identify how many customers are repeat buyers
+#  Identify how many customers are repeat buyers
 # -----------------------------------------------------
 # Filter for purchases only
 purchase_data <- ecommerce_data %>%
@@ -32,7 +32,7 @@ repeat_summary <- repeat_buyers %>%
 print(repeat_summary)
 
 # --------------------------------------------
-# Step 4: Calculate Average Order Value (AOV)
+#  Calculate Average Order Value (AOV)
 # --------------------------------------------
 # Group by customer and calculate AOV
 aov <- purchase_data %>%
@@ -47,7 +47,7 @@ aov <- purchase_data %>%
 summary(aov$avg_order_value)
 
 # ---------------------------------------------------
-# Step 5: Build a customer journey funnel visualization
+#  Build a customer journey funnel visualization
 # ---------------------------------------------------
 # Count total events by type (view → add_to_cart → purchase)
 event_funnel <- ecommerce_data %>%
@@ -64,7 +64,7 @@ ggplot(event_funnel, aes(x = reorder(event_type, -n), y = n, fill = event_type))
   theme_minimal()
 
 # -----------------------------------------------------
-# Step 6: Analyze purchases by day of the week
+#  Analyze purchases by day of the week
 # -----------------------------------------------------
 # Extract day of week from timestamp and count purchases
 purchase_data %>%
@@ -79,7 +79,7 @@ purchase_data %>%
   theme_minimal()
 
 # -----------------------------------------------------
-# Step 7: Perform RFM Analysis (Recency, Frequency, Monetary)
+#  Perform RFM Analysis (Recency, Frequency, Monetary)
 # -----------------------------------------------------
 # Calculate RFM metrics for each customer
 rfm_data <- purchase_data %>%
@@ -90,7 +90,7 @@ rfm_data <- purchase_data %>%
     monetary = sum(price)
   )
 
-# Step 8: Create RFM score by segmenting each metric into quintiles (1-5)
+#  Create RFM score by segmenting each metric into quintiles (1-5)
 rfm_data <- rfm_data %>%
   mutate(
     r_score = ntile(-recency, 5), # lower recency = better score
