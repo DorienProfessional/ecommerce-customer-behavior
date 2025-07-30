@@ -1,0 +1,70 @@
+# Load essential libraries
+library(readr)
+library(dplyr)
+library(lubridate)
+library(tidyr)
+
+# ----------------------------------------------
+# Step 1: Load the synthetic dataset
+# ----------------------------------------------
+# Replace "ecommerce_data.csv" with your actual file name
+ecommerce_data <- read_csv("ecommerce_data.csv")
+
+# Step 2: Preview structure and a few rows of the dataset
+glimpse(ecommerce_data)
+head(ecommerce_data)
+
+# ----------------------------------------------
+# Step 3: Check for missing values
+# ----------------------------------------------
+missing_summary <- ecommerce_data %>%
+  summarise_all(~sum(is.na(.)))
+
+print(missing_summary)
+
+# Optional: drop rows with critical missing values
+ecommerce_data <- ecommerce_data %>%
+  drop_na(customer_id, event_type, event_time)
+
+# ----------------------------------------------
+# Step 4: Format date/time columns
+# ----------------------------------------------
+# Convert event_time to datetime format for time-based analysis
+ecommerce_data <- ecommerce_data %>%
+  mutate(event_time = as_datetime(event_time))
+
+# ----------------------------------------------
+# Step 5: Standardize text fields (if needed)
+# ----------------------------------------------
+# Convert event_type and category_code to lowercase
+ecommerce_data <- ecommerce_data %>%
+  mutate(
+    event_type = tolower(event_type),
+    category_code = tolower(category_code)
+  )
+
+# ----------------------------------------------
+# Step 6: Create derived variables (optional)
+# ----------------------------------------------
+# Add new columns such as:
+# - date only
+# - hour of day
+# - day of week
+ecommerce_data <- ecommerce_data %>%
+  mutate(
+    date = as_date(event_time),
+    hour = hour(event_time),
+    weekday = wday(event_time, label = TRUE)
+  )
+
+# ----------------------------------------------
+# Step 7: Filter the dataset (optional)
+# ----------------------------------------------
+# Keep only relevant events for customer behavior (e.g., views, add_to_cart, purchases)
+ecommerce_data <- ecommerce_data %>%
+  filter(event_type %in% c("view", "add_to_cart", "purchase"))
+
+# ----------------------------------------------
+# Step 8: Save a clean version of the dataset (optional)
+# ----------------------------------------------
+# write_csv(ecommerce_data, "cleaned_ecommerce_data.csv")
