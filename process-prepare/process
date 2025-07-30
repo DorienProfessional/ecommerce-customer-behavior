@@ -65,6 +65,6 @@ ecommerce_data <- ecommerce_data %>%
   filter(event_type %in% c("view", "add_to_cart", "purchase"))
 
 # ----------------------------------------------
-# Step 8: Save a clean version of the dataset (optional)
+#  Save a clean version of the dataset (optional)
 # ----------------------------------------------
 # write_csv(ecommerce_data, "cleaned_ecommerce_data.csv")
